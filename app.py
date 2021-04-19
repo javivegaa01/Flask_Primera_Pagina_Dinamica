@@ -1,6 +1,7 @@
 from flask import Flask, render_template,abort
 app = Flask(__name__)
-import lxml
+from lxml import etree
+
 
 @app.route('/')
 def inicio():
@@ -36,5 +37,13 @@ def cuenta_letra(palabra,letras):
         num_veces=palabra.count(letras)
     return render_template("palabras.html",palabra=palabra,letras=letras,num_veces=num_veces)
 
-@app.route('/<libro>/<codigo>/',methods=["GET","POST"])
-app.run("0.0.0.0",8000,debug=True)
+@app.route('/libro/<int:codigo>',methods=["GET","POST"])
+def buscar_codigo(codigo):
+    doc=etree.parse("libros.xml")
+    if str(codigo) in doc.xpath('/biblioteca/libro/codigo/text()'):
+        titulo = doc.xpath('/biblioteca/libro[codigo/text()=''%s'']/titulo/text()' % codigo)[0]
+        autor = doc.xpath('/biblioteca/libro[codigo/text()=''%s'']/autor/text()' % codigo)[0]
+    else:
+        abort(404)
+    return render_template("biblioteca.html",titulo=titulo,autor=autor)
+app.run(debug=True)
