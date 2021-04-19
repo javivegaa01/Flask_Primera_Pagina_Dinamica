@@ -1,5 +1,6 @@
 from flask import Flask, render_template,abort
 app = Flask(__name__)
+import lxml
 
 @app.route('/')
 def inicio():
@@ -35,4 +36,5 @@ def cuenta_letra(palabra,letras):
         num_veces=palabra.count(letras)
     return render_template("palabras.html",palabra=palabra,letras=letras,num_veces=num_veces)
 
+@app.route('/<libro>/<codigo>/',methods=["GET","POST"])
 app.run("0.0.0.0",8000,debug=True)
